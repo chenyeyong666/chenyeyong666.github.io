@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./music.css">
+    <link rel="stylesheet" href="./fontIcon/css/font-awesome.css">
+
+</head>
+<body>
+    <audio style="display: none; position: fixed; top: 0; left: 0; z-index: 9" src="./2.mp3" controls></audio>
+    <div class="stage">
+      <div class="player">
+        <div class="track">
+          <div class="right">
+            <h3>Electro Boy</h3>
+            <h5>Kaaze - Electro Boy</h5>
+            <div class="progress">
+              <input type="range" min="0" max="100" step="0.1" />
+              <span class="x"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control">
+          <div class="thumb">
+            <img src="./1.jpg" alt="" />
+          </div>
+          <ul class="bar">
+            <li><i class="fa fa-backward"></i></li>
+            <li>
+              <i class="fa fa-play"></i>
+              <i class="fa fa-pause"></i>
+            </li>
+            <li><i class="fa fa-forward"></i></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        var songs = [
+  {
+    songName: "Dawn",
+    artist: "Skylike",
+    album: "1.jpg",
+    url: "1.mp3",
+  },
+  {
+    songName: "Me & You",
+    artist: "Alex Skrindo",
+    album: "2.jpg",
+    url: "2.mp3",
+  },
+];
+
+var tuoing = false;
+var player = document.querySelector(".player");
+var progress = player.querySelector(".progress");
+var input = progress.querySelector("input");
+var audio = document.querySelector("audio");
+
+input.oninput = function (event) {
+  console.log(event.target.value);
+  //   v
+  var v = event.target.value;
+  progress.querySelector(".x").style.width = v + "%";
+  progress.querySelector(".dot").style.left = v + "%";
+  tuoing = true;
+};
+
+input.onchange = function (event) {
+  var v = event.target.value;
+  audio.currentTime = (v / 100) * audio.duration;
+  tuoing = false;
+};
+
+audio.onplay = function () {
+  player.classList.add("playing");
+};
+audio.onpause = function () {
+  player.classList.remove("playing");
+};
+
+audio.ontimeupdate = function () {
+  if (!tuoing) {
+    //   console.log(audio.currentTime, audio.duration);
+    //   console.log((audio.currentTime / audio.duration) * 100);
+    var v = (audio.currentTime / audio.duration) * 100;
+
+    input.value = v;
+    progress.querySelector(".x").style.width = v + "%";
+    progress.querySelector(".dot").style.left = v + "%";
+  }
+};
+
+document.querySelector(".fa-play").onclick = function () {
+  audio.play();
+};
+
+document.querySelector(".fa-pause").onclick = function () {
+  audio.pause();
+};
+    </script>
+</body>
+</html>

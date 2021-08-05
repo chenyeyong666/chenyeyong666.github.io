@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html ,body {
+            margin: 0;
+            padding: 0;
+        }
+        .box {
+            width: 1200px;
+            margin: 0 auto;
+        }
+        .zuo {
+            width: 450px; 
+            float: left;   
+        }
+        .middle {
+            width: 450px;
+            height: 450px;
+            border: 2px solid #000;
+            position: relative;
+            float: left;
+        }
+
+        .mask {
+            width: 238px;
+            height: 238px;
+            background-color: rgba(255, 255, 0, 0.5);
+            cursor: move;
+            position: absolute;
+            left: 0;
+            top: 0;
+            /* 隐藏遮罩层 */
+            display: none;
+        }
+
+        .small {
+            width:450px;
+            height: 100px;
+            background-color: black;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            box-sizing: border-box;
+            float: left;
+            margin-top: 10px;
+        }
+
+        .small .pic {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+        }
+
+        .small .pic img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .small .pic.active {
+            border: 2px solid white;
+        }
+        
+        .big {
+            width: 400px;
+            height: 400px;
+            float: left;
+            margin-left: 50px;
+            position: relative;
+            border: 1px solid #000;
+            overflow: hidden;
+            /* 隐藏大盒子 */
+            display: none;
+            /* margin-top: 30px; */
+        }
+        .big img {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .clearfix::after {
+            content: "";
+            display: block;
+            clear: both;
+}
+    </style>
+</head>
+<body>
+    <div class="box clearfix">
+    <div class="zuo">
+        <div class="middle" >
+            <img class="detail" src="images/1_middle.jpg" alt="">
+            <div class="mask"></div>
+        </div>
+        <div class="small">
+            <div class="pic active"><img src="images/1_small.jpg" alt=""></div>
+            <div class="pic"><img src="images/2_small.jpg" alt=""></div>
+            <div class="pic"><img src="images/3_small.jpg" alt=""></div>
+            <div class="pic"><img src="images/4_small.jpg" alt=""></div>
+            <div class="pic"><img src="images/5_small.jpg" alt=""></div>          
+        </div>
+    </div>
+        <div class="big">
+            <img class="big-img" src="./images/1_big.jpg" alt="">
+        </div>      
+    </div>
+
+</body>
+<script>
+    var pics = document.querySelectorAll(".pic");
+    var detail = document.querySelector(".detail");
+    var big = document.querySelector(".big");
+    var mid = document.querySelector(".middle");
+    var mask = document.querySelector(".mask");
+    var bigImg = document.querySelector(".big-img");
+    for (var i = 0; i < pics.length; i++) {
+            // 绑定事件
+            pics[i].index=i+1;
+            pics[i].onmouseover = function () {
+                 
+                for (var j = 0; j < pics.length; j++) {
+                    
+                    pics[j].classList.remove("active");                   
+                }
+                // 添加自己
+                this.classList.add("active");
+                // 改变中图
+                detail.src = 'images/'+this.index+'_middle.jpg';
+                bigImg.src = './images/'+this.index+'_big.jpg';
+                 console.log(bigImg);
+                
+            };           
+        }
+    // 记录遮罩层的坐标位置
+    var x = 0;
+    var y = 0;
+    // 显示元素
+    function show(dom){
+        // 设置显示方式 block
+        dom.style.display = "block";
+    }
+    // 隐藏元素
+    function hide(dom){
+        // 设置显示方式 block
+        dom.style.display = "none";
+    }
+    // 鼠标移入事件
+    mid.onmouseenter = function(){
+        // 显示遮罩层
+        show(mask);
+        // 显示大盒子
+        show(big);
+    }
+     // 鼠标移出事件
+    mid.onmouseleave = function(){
+        // 隐藏遮罩层
+        hide(mask);
+        // 隐藏大盒子
+        hide(big);
+    }
+    mid.onmousemove = function(e){
+        // 记录鼠标在可视区范围的坐标位置
+        x = e.clientX;
+        y = e.clientY;
+        // 计算遮罩层盒子的位置
+        x = x - mid.offsetLeft - mask.offsetWidth / 2 ;
+        y = y - mid.offsetTop - mask.offsetHeight / 2 ;
+        // 判断遮罩层盒子是否超出小盒子范围
+        // 遮罩层可移动的最大距离
+        var maxWidth = mid.offsetWidth - mask.offsetWidth;
+        var maxHeight = mid.offsetHeight - mask.offsetHeight;
+
+        if(x < 0 ) x = 0 ;
+        if(x > maxWidth) x = maxWidth;
+        if(y < 0) y = 0;
+        if(y > maxHeight) y = maxHeight;
+
+        // 设置遮罩层当前的位置（遮罩层当前移动的位置）
+        mask.style.left = x +"px";
+        mask.style.top = y +"px";
+        // 计算图片可移动的最大距离
+        var imgMaxWidth = bigImg.offsetWidth - big.offsetWidth;
+        var imgMaxHeight = bigImg.offsetHeight - big.offsetHeight;
+
+        var demoX = x / maxWidth;
+        var demoY = y / maxHeight;
+        // 计算大图片当前移动的位置
+        var x2 = demoX * imgMaxWidth;
+        var y2 = demoY * imgMaxHeight;
+        // 设置大图片当前的位置
+        bigImg.style.left = -x2 +"px";
+        bigImg.style.top = -y2 +"px";
+
+}
+</script>
+</html>

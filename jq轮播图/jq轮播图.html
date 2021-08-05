@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+        img{
+            vertical-align: bottom;
+        }
+        li{
+            list-style:none;
+        }
+        .banner{
+            width: 500px;
+            position: relative;
+            margin:100px auto;
+        }
+        .banner .bigpic{
+            width: 500px;
+            height: 375px;
+        }
+        .banner .bigpic li {
+            width: 500px;
+            height: 375px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+        }
+        .banner .bigpic li.active{
+            display: block;
+        }
+        .banner .bigpic li img{
+            width: 500px;
+        }
+
+        .banner .smallpic {
+            margin-top: 10px;
+            display:flex;
+            justify-content: space-between;
+        }
+        .banner .smallpic li {
+            opacity: 0.5;
+            cursor: pointer;
+        }
+        .banner .smallpic li img{
+            width: 160px;
+        }
+        .banner .smallpic li.active{
+            opacity: 1;
+        }
+
+        .banner .prev,.banner .next{
+            width: 30px;
+            height: 50px;
+            background: rgba(0,0,0,0.3);
+            position: absolute;
+            top: 162px;
+            text-align: center;
+            line-height: 50px;
+            font-size:30px;
+            color:white;
+            font-family: "宋体";
+            cursor: pointer;
+        }
+        .banner .prev{
+            left: 0;
+        }
+        .banner .next{
+            right: 0;
+        }
+        .banner .prev:hover, .banner .next:hover{
+            background: rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="banner">
+        <ul class="bigpic">
+            <li class="active"><img src="images/1.jpeg"></li>
+            <li><img src="images/2.jpeg"></li>
+            <li><img src="images/3.jpeg"></li>
+        </ul>
+
+        <ul class="smallpic">
+            <li class="active"><img src="images/1.jpeg"></li>
+            <li><img src="images/2.jpeg"></li>
+            <li><img src="images/3.jpeg"></li>
+        </ul>
+        
+        <span class="prev">&lt;</span>
+        <span class="next">&gt;</span>
+    </div>
+</body>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script>
+        //定义全局变量
+        var index = 0;
+        //给指定的图片添加active
+        function img(index) {
+            $(".banner .bigpic li").eq(index).addClass("active").siblings("li").removeClass("active");
+            $(".banner .smallpic li").eq(index).addClass("active").siblings("li").removeClass("active");
+        }
+        //点击上一个
+        $(".prev").click(function() {
+            index --;
+            //边距判断
+            if(index == 3){
+                index = 0;
+            }
+            if(index < 0){
+                index = 2;
+            }
+            //调用函数
+            img(index);
+        });
+        //点击下一个
+        $(".next").click(function() {
+            index ++;
+            //边距判断
+            if(index == 3){
+                index = 0;
+            }
+            if(index < 0){
+                index = 2;
+            }
+            //调用函数
+            img(index);
+        });
+        //点击小图，大图也切换
+        $(".banner .smallpic li").click(function() {
+            var number = $(this).index();
+            index = number;
+            img(index);
+        })
+        //定时器
+        var timer = null;
+        function play(){
+            if(timer == null){
+                timer = window.setInterval(function(){
+                    index ++;
+                    if(index == 3){
+                        index=0;
+                    }
+                    if(index < 0){
+                        index = 2;
+                    }
+                    img(index);
+                },1000);
+            }
+        }
+        play();
+        //鼠标移上时，清除定时器
+        $(".banner").hover(function() {
+            window.clearInterval(timer);
+            timer = null;
+        },function () {//执行定时器
+            play();
+        });
+    </script>
+</html>
